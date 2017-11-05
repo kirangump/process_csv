@@ -65,22 +65,31 @@ def extract_info () :
                 col = col.strip()
                 if col == "TPR_ORDER" :
                     tpr_order_col_num = colnum
+		    print "set tpr_order_col_num %s " % (colnum)
                 if col == "TP_ISOLATION" :
                     tp_isolation_col_num = colnum
+		    print "set tp_isolation_col_num  %s " % (colnum)
                 if col == "ANALOG_TOP_PORT_NAME" :
                     analog_signal_name_col_num = colnum
+		    print "set analog_signal_name_col_num %s " % (colnum)
                 if col == "DIRECTION" :
                     signal_direction_col_num = colnum
+		    print "set signal_direction_col_num %s " % (colnum)
                 if col == "SCAN_ISOLATION" :
                     toggle_info_col_num = colnum
+		    print "set toggle_info_col_num %s " % (colnum)
                 if col == "TPR_NAME" :
                     tpr_names_col_num = colnum
+		    print "set tpr_names_col_num %s " % (colnum)
                 if col == "POWER_DOMAIN" :
                     power_domain_col_num = colnum
+		    print "set power_domain_col_num %s " % (colnum)
                 if col == "DYNAMIC_GROUP" :
                     dynamic_col_num = colnum
+		    print "set dynamic_col_num %s " % (colnum)
                 if col == "ANALOG_SHELL_PORT_NAME" :
                     analog_shell_name_col_num = colnum
+		    print "set analog_shell_name_col_num %s " % (colnum)
                 colnum += 1
         else :
            colnum = 0
@@ -147,6 +156,7 @@ def extract_info () :
            for col in row:
                if colnum == tpr_order_col_num and col != "" and col !="sw_mtp"  :
                    f.write('%s ' % (col))
+		   print ("tpr:" % (col))
                if col == "clamp_zero" and row[tpr_names_col_num] !="sw_mtp"  :
                    g.write ('%s;%s\n' % (row[analog_signal_name_col_num],row[tpr_names_col_num]))
                if (colnum == tpr_names_col_num) and ((col == "ao_func" or col == "ao_trim"  ) and (row[analog_signal_name_col_num] !="" and row[tp_isolation_col_num] !="bypass"
@@ -204,6 +214,56 @@ ifile.close()
 
 
 
+# Classes 
+#######################################################################
+#class Tpr:
+#
+#    def __init__(self,tpr):
+#        self.name = tpr
+#        self.rows = []    # creates a new empty list for each tpr 
+#
+#    def add_row(self,row):
+#		self.rows.append(row)
+########################################################################
+#
+#
+##Make an vdd_bb Tpr object 
+#
+#tpr_vdd_bb = Tpr('tpr_vdd_bb') 	
 
-# Reference
+
+
+
+
+
+
+
+def iso(x,y):
+	if (x == "input" and y == "static" ): 
+		z = "STC_IN" 
+	if (x == "output" and y == "static" ): 
+		z = "STC_OUT" 
+	if (x == "input" and y == "bypass" ): 
+		z = "BZP_OUT" 
+	if (x == "output" and y == "bypass" ): 
+		z = "BZP_OUT" 
+	return z 
+
+
+
+##############################################################
+########### BB TPR 		   ###########################
+##############################################################
+ifile_tpr  = open('analog_port_list.csv', "rb")
+reader_tpr = csv.reader(ifile_tpr,delimiter=',')
+for row in reader_tpr:
+	if (row[tpr_names_col_num] == "tpr_vdd_bb" ):
+#		print ("%s %s %s %s %s %s " % (row[digital_signal_name_col_num],row[analog_signal_name_col_num],row[signal_direction_col_num],row[tp_isolation_col_num],row[toggle_info_col_num],row[tpr_names_col_num]))
+	        dig_name= row[digital_signal_name_col_num]
+        	print ("%s" % (dig_name))
+		kk=	iso(row[signal_direction_col_num],row[tp_isolation_col_num]) 
+        	print ("%s" % (kk))
+
+
+ifile_tpr.close()
 
