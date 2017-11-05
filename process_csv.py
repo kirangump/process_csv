@@ -5,10 +5,25 @@
 ###############################################################
 
 ###############################################################
+import sys
+import os
 import csv
+import string
 import re
 from collections import defaultdict
 ###############################################################
+
+
+if len( sys.argv ) < 2 :
+    sys.stderr.write( sys.argv[ 0 ]  + 
+                      ": usage - "   + 
+                      sys.argv[ 0 ]  + " [.csv file name]\n" )
+    sys.exit()
+
+if not os.path.exists(sys.argv[ 1 ]):
+    sys.stderr.write( sys.argv[ 1 ] + " not found \n" )
+    sys.exit()
+
 
 p = re.compile('\[.*\]')
 
@@ -19,7 +34,8 @@ tpr_manual="sw_mtp"  #Name of TPR which is manually done and to be excluded for 
 ##############################################################
 ########### READ ANALOG PORT LIST  ###########################
 ##############################################################
-ifile  = open('analog_port_list.csv', "rb")
+ifile = open( sys.argv[ 1 ], 'rb') 
+#ifile_tpr  = open('analog_port_list.csv', "rb")
 reader = csv.reader(ifile,delimiter=',')
 ##############################################################
 
@@ -27,7 +43,7 @@ reader = csv.reader(ifile,delimiter=',')
 # Default column numbers in the analog port list
 digital_signal_name_col_num = 0
 analog_signal_name_col_num  = 1
-analog_shell_name_col_num  = 14
+analog_shell_name_col_num   = 14
 signal_direction_col_num    = 3
 tp_isolation_col_num        = 4
 toggle_info_col_num         = 5
@@ -236,8 +252,7 @@ ifile.close()
 
 
 
-
-
+#####TPR ISO TYPE MAPPING#############################
 def iso(x,y):
 	if (x == "input" and y == "static" ): 
 		z = "STC_IN" 
@@ -248,21 +263,30 @@ def iso(x,y):
 	if (x == "output" and y == "bypass" ): 
 		z = "BZP_OUT" 
 	return z 
+##############################################################
 
 
 
 ##############################################################
 ########### BB TPR 		   ###########################
 ##############################################################
+sys.stdout = open('file.html', 'w')
 ifile_tpr  = open('analog_port_list.csv', "rb")
 reader_tpr = csv.reader(ifile_tpr,delimiter=',')
+table_string = '<TABLE border="1">'
 for row in reader_tpr:
 	if (row[tpr_names_col_num] == "tpr_vdd_bb" ):
 #		print ("%s %s %s %s %s %s " % (row[digital_signal_name_col_num],row[analog_signal_name_col_num],row[signal_direction_col_num],row[tp_isolation_col_num],row[toggle_info_col_num],row[tpr_names_col_num]))
-	        dig_name= row[digital_signal_name_col_num]
-        	print ("%s" % (dig_name))
-		kk=	iso(row[signal_direction_col_num],row[tp_isolation_col_num]) 
-        	print ("%s" % (kk))
+		
+		ctag_iso =	iso(row[signal_direction_col_num],row[tp_isolation_col_num]) 
+        	#print ("%s\t%s" % (row[digital_signal_name_col_num],ctag_iso))
+        	table_string += "<tr>" + \
+                          "<td >" + \
+                              string.join( row, "</td><td >" ) + \
+                          "</td>" + \
+                        "</tr>\n"
+    
+sys.stdout.write( table_string )
 
 
 ifile_tpr.close()
