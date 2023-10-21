@@ -1,0 +1,29 @@
+def print_mismatched_lines(lines):
+    prev_line = None
+    for line in lines:
+        if prev_line:
+            prev_words = prev_line.strip().split(".")
+            curr_words = line.strip().split(".")
+            prev_last_word = prev_words[-1]
+            curr_last_word = curr_words[-1]
+            #print(prev_last_word)
+            #print(curr_last_word)
+            #print(prev_words)
+            if prev_last_word != curr_last_word:
+                print("Mismatched lines:")
+                print(prev_line)
+                print(line)
+                print()  # Add an empty line separator
+        
+        prev_line = line
+
+# Example usage:
+lines = [
+    "kk.aa.ss",
+    "ss",
+    "sa",
+    "as",
+    "as"
+]
+
+print_mismatched_lines(lines)
